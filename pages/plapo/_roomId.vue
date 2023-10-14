@@ -1,25 +1,28 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col
-        v-for="(card, index) in cards"
-        :key="index"
-        cols="2"
+
+  <v-row class="pa-1">
+    <v-col
+      v-for="(card, index) in cards"
+      :key="index"
+      cols="4"
+      style="width: 120px; min-width: 120px;"
+      class="d-flex justify-center pa-2"
+    >
+      <v-card
+        :elevation="selectedCardIndex === index ? 12 : 2"
+        style="width: 90px; height: 150px;"
+        class="d-flex justify-center align-center hover-when-mouseover"
+        hover
+        @mouseover="selectedCardIndex = index"
+        @mouseleave="selectedCardIndex = null"
+        @click="selectCard(index)"
       >
-        <v-card
-          :elevation="selectedCardIndex === index ? 12 : 2"
-          class="mx-auto"
-          hover
-          @mouseover="selectedCardIndex = index"
-          @click="selectCard(index)"
-        >
-          <v-card-text class="text-center">
-            {{ card.name }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+        <v-card-text class="text-center">
+          {{ card.name }}
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -35,9 +38,14 @@ export default {
   data() {
     return {
       cards: [
-        {name: 'Card 1'},
-        {name: 'Card 2'},
-        {name: 'Card 3'},
+        {name: '1'},
+        {name: '2'},
+        {name: '3'},
+        {name: '5'},
+        {name: '8'},
+        {name: '13'},
+        {name: '21'},
+        {name: '34'},
         // ... その他のカード
       ],
       selectedCardIndex: null,
@@ -53,20 +61,8 @@ export default {
 </script>
 
 <style scoped>
-.hand {
-  display: flex;
-  gap: 10px;
-}
-
-.card {
-  padding: 20px;
-  border: 1px solid black;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.card.selected {
-  transform: scale(1.2);
-  z-index: 1;  /* カードが他のカードの上に表示されるようにする */
+.hover-when-mouseover:hover {
+  transform: translateY(-10px);
+  transition: transform 0.3s ease-in-out;
 }
 </style>

@@ -34,7 +34,7 @@
       <v-spacer />
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container style="max-width: 370px">
         <Nuxt />
       </v-container>
     </v-main>
