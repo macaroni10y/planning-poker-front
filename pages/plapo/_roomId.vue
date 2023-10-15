@@ -1,24 +1,34 @@
 <template>
   <div class="plapo-main">
+    <v-container>
+      <v-row v-if="voteCompleted">
+        <v-col>average: {{ average }}</v-col>
+        <v-col>mode: {{ mode }}</v-col>
+        <v-col>scrumDecision: {{ scrumDecision }}</v-col>
+      </v-row>
+      <v-row v-else>
+        <v-col>waiting for all participants to vote</v-col>
+      </v-row>
+    </v-container>
     <v-container class="participants-container ma-0 pa16">
       <v-row class="participants-header">
         <v-col class="header-content" cols="6">name</v-col>
         <v-col class="header-content" cols="6">vote</v-col>
       </v-row>
       <div style="max-height: 60vh;overflow-y: auto;">
-      <v-row class="participant-container" v-for="participant in participants">
-        <v-col class="participant-name">
-        {{ participant.name }}
-        </v-col>
-        <v-col class="participant-vote">
-          <div v-if="participant.vote">
-            <v-icon color="green">mdi-check</v-icon>
-          </div>
-          <div v-else>
-            <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
-          </div>
-        </v-col>
-      </v-row>
+        <v-row class="participant-container" v-for="participant in participants">
+          <v-col class="participant-name">
+            {{ participant.name }}
+          </v-col>
+          <v-col class="participant-vote">
+            <div v-if="participant.vote">
+              <v-icon color="green">mdi-check</v-icon>
+            </div>
+            <div v-else>
+              <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
+            </div>
+          </v-col>
+        </v-row>
       </div>
     </v-container>
     you selected
@@ -53,6 +63,19 @@
 </template>
 
 <script>
+const CARD_OPTIONS = [
+  '0.5',
+  '1',
+  '2',
+  '3',
+  '5',
+  '8',
+  '13',
+  '20',
+  '40',
+  '100',
+  'skip',
+];
 export default {
   name: 'PlapoPage',
   components: {},
@@ -64,34 +87,12 @@ export default {
   },
   data() {
     return {
-      cards: [
-        {name: '1/2'},
-        {name: '1'},
-        {name: '2'},
-        {name: '3'},
-        {name: '5'},
-        {name: '8'},
-        {name: '13'},
-        {name: '20'},
-        {name: '40'},
-        {name: '100'},
-        {name: 'skip'},
-      ],
       participants: [
-        {name: 'hoge', vote: '4'},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: '3'},
-        {name: 'fuga', vote: '2'},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'fuga', vote: ''},
-        {name: 'piyo', vote: ''},
+        {name: 'hoge', vote: 1},
+        {name: 'fuga', vote: 1},
+        {name: 'fuga', vote: 2},
+        {name: 'fuga', vote: 3},
+        {name: 'fuga', vote: 'skip'},
       ],
       hoveredCardIndex: null,
       selectedCardNumber: null,
@@ -109,6 +110,53 @@ export default {
         bottom: '20px',
         left: `calc(-40px * ${index} + 180px)`
       };
+    }
+  },
+  computed: {
+    cards() {
+      return CARD_OPTIONS.map(value => ({name: value}));
+    },
+    voteCompleted() {
+      return this.participants.every(value => value.vote);
+    },
+    availableVotes() {
+      return this.participants
+        .map(value => value.vote)
+        .filter(value => !value || value !== 'skip');
+    },
+    sum() {
+      return this.availableVotes
+        .reduce((accumulator, current) => accumulator + current, 0)
+    },
+    average() {
+      return +(Math.round(this.sum / this.availableVotes.length + "e+1") + "e-1");
+    },
+    groupedByCount() {
+      return this.availableVotes.reduce((accumulator, current) => {
+        accumulator[current] = (accumulator[current] || 0) + 1;
+        return accumulator;
+      }, {});
+    },
+    mode() {
+      const counts = this.groupedByCount;
+      const maxCount = Math.max(...Object.values(counts));
+      return Object.keys(counts).filter(key => counts[key] === maxCount).join(', ');
+    },
+    scrumDecision() {
+      const groups = Object.keys(this.groupedByCount).sort();
+      const groupCount = groups.length;
+      const isConsecutive = (startIndex, count) =>
+        [...Array(count).keys()].every(offset =>
+          CARD_OPTIONS[startIndex + offset] === groups[offset]
+        );
+      if (groupCount === 1) {
+        return groups[0];
+      }
+      const minIndex = CARD_OPTIONS.findIndex(value => value === groups[0]);
+      if ((groupCount === 2 || groupCount === 3) && isConsecutive(minIndex, groupCount)) {
+        return groups[1];
+      }
+      return 'discuss';
     }
   }
 }
@@ -141,11 +189,13 @@ export default {
 
     .participant-container {
       margin: 0;
+
       .participant-name {
         display: flex;
         justify-content: center;
         align-items: center;
       }
+
       .participant-vote {
         display: flex;
         justify-content: center;
@@ -153,8 +203,9 @@ export default {
       }
     }
   }
+
   .own-vote-container {
-    flex:1;
+    flex: 1;
     font-size: 36px;
   }
 
@@ -178,9 +229,6 @@ export default {
     }
   }
 }
-
-
-
 
 
 </style>
