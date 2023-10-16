@@ -21,7 +21,8 @@
             {{ participant.name }}
           </v-col>
           <v-col class="participant-vote">
-            <div v-if="participant.vote">
+            <div v-if="voteCompleted">{{participant.vote}}</div>
+            <div v-else-if="participant.vote">
               <v-icon color="green">mdi-check</v-icon>
             </div>
             <div v-else>
@@ -63,6 +64,7 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie';
 const CARD_OPTIONS = [
   '0.5',
   '1',
@@ -87,20 +89,17 @@ export default {
   },
   data() {
     return {
-      participants: [
-        {name: 'hoge', vote: 1},
-        {name: 'fuga', vote: 1},
-        {name: 'fuga', vote: 2},
-        {name: 'fuga', vote: 3},
-        {name: 'fuga', vote: 'skip'},
-      ],
+      participants: [],
+      playerTimestamp: null,
       hoveredCardIndex: null,
       selectedCardNumber: null,
+      socket: null,
     };
   },
   methods: {
     selectCard(card) {
       this.selectedCardNumber = card.name;
+      this.sendMessage();
     },
     getStyle(index) {
       return {
@@ -110,6 +109,9 @@ export default {
         bottom: '20px',
         left: `calc(-40px * ${index} + 180px)`
       };
+    },
+    sendMessage() {
+      this.socket.send(JSON.stringify({roomId: this.roomId, playerTimestamp: this.playerTimestamp, playerId: 'hoge', cardNumber: this.selectedCardNumber}));
     }
   },
   computed: {
@@ -126,7 +128,7 @@ export default {
     },
     sum() {
       return this.availableVotes
-        .reduce((accumulator, current) => accumulator + current, 0)
+        .reduce((accumulator, current) => accumulator + +(current), 0)
     },
     average() {
       return +(Math.round(this.sum / this.availableVotes.length + "e+1") + "e-1");
@@ -158,7 +160,24 @@ export default {
       }
       return 'discuss';
     }
-  }
+  },
+  created() {
+    const key = 'playerTimestamp';
+    this.playerTimestamp = Cookies.get(key) || 'hoge' + new Date().getTime().toString();
+    if (!Cookies.get(key)) {
+      Cookies.set(key, this.playerTimestamp);
+    }
+
+    this.socket = new WebSocket('ws://localhost:8080');
+    this.socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log(data);
+      this.participants = data.map(value => ({name: value.playerId, vote: value.cardNumber}));
+    };
+    this.socket.onopen = () => {
+      this.sendMessage();
+    }
+  },
 }
 </script>
 
@@ -229,6 +248,4 @@ export default {
     }
   }
 }
-
-
 </style>
