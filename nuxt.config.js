@@ -34,6 +34,7 @@ export default {
   ],
 
   router: {
+    middleware: 'loginCheck',
     extendRoutes(routes, resolve) {
       routes.forEach((route) => {
         if(route.path.includes('/plapo/')) {

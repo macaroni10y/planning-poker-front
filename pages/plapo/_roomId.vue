@@ -21,7 +21,7 @@
             {{ participant.name }}
           </v-col>
           <v-col class="participant-vote">
-            <div v-if="voteCompleted">{{participant.vote}}</div>
+            <div v-if="voteCompleted">{{ participant.vote }}</div>
             <div v-else-if="participant.vote">
               <v-icon color="green">mdi-check</v-icon>
             </div>
@@ -65,6 +65,7 @@
 
 <script>
 import Cookies from 'js-cookie';
+
 const CARD_OPTIONS = [
   '0.5',
   '1',
@@ -90,7 +91,8 @@ export default {
   data() {
     return {
       participants: [],
-      playerTimestamp: null,
+      userName: '',
+      timestamp: '',
       hoveredCardIndex: null,
       selectedCardNumber: null,
       socket: null,
@@ -99,7 +101,7 @@ export default {
   methods: {
     selectCard(card) {
       this.selectedCardNumber = card.name;
-      this.sendMessage();
+      this.submitCard();
     },
     getStyle(index) {
       return {
@@ -110,9 +112,21 @@ export default {
         left: `calc(-40px * ${index} + 180px)`
       };
     },
-    sendMessage() {
-      this.socket.send(JSON.stringify({roomId: this.roomId, playerTimestamp: this.playerTimestamp, playerId: 'hoge', cardNumber: this.selectedCardNumber}));
+    submitCard() {
+      this.socket.send(JSON.stringify({
+        operation: 'SUBMIT',
+        roomId: this.roomId,
+        userId: this.userName + this.timestamp,
+        userName: this.userName,
+        cardNumber: this.selectedCardNumber
+      }));
+    },
+    resetRoom() {
+      this.socket.send(JSON.stringify({
+        operation: 'RESET'
+      }))
     }
+
   },
   computed: {
     cards() {
@@ -162,21 +176,21 @@ export default {
     }
   },
   created() {
-    const key = 'playerTimestamp';
-    this.playerTimestamp = Cookies.get(key) || 'hoge' + new Date().getTime().toString();
-    if (!Cookies.get(key)) {
-      Cookies.set(key, this.playerTimestamp);
-    }
+    const key = 'userInfo';
+    const userInfo = JSON.parse(Cookies.get(key));
+    console.log(userInfo);
+    if (!userInfo) this.$router.push('/login');
+
+    this.userName = userInfo.userName;
+    this.timestamp = userInfo.timestamp;
 
     this.socket = new WebSocket('ws://localhost:8080');
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log(data);
-      this.participants = data.map(value => ({name: value.playerId, vote: value.cardNumber}));
+      this.participants = data.map(value => ({name: value.userName, vote: value.cardNumber}));
     };
-    this.socket.onopen = () => {
-      this.sendMessage();
-    }
+    this.socket.onopen = () => this.submitCard()
   },
 }
 </script>
