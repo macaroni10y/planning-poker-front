@@ -38,6 +38,7 @@
         {{ selectedCardNumber }}
       </div>
     </div>
+    <v-btn color="#FFC8DCFF" @click="resetRoom">reset</v-btn>
 
     <div class="card-container">
       <div
@@ -123,7 +124,9 @@ export default {
     },
     resetRoom() {
       this.socket.send(JSON.stringify({
-        operation: 'RESET'
+        operation: 'RESET',
+        roomId: this.roomId,
+        userId: this.userName + this.timestamp,
       }))
     }
 
@@ -159,12 +162,11 @@ export default {
       return Object.keys(counts).filter(key => counts[key] === maxCount).join(', ');
     },
     scrumDecision() {
-      const groups = Object.keys(this.groupedByCount).sort();
+      const groups = Object.keys(this.groupedByCount)
+        .sort((a, b) => +a - +b);
       const groupCount = groups.length;
-      const isConsecutive = (startIndex, count) =>
-        [...Array(count).keys()].every(offset =>
-          CARD_OPTIONS[startIndex + offset] === groups[offset]
-        );
+      const isConsecutive = (startIndex, count) => [...Array(count).keys()]
+        .every(offset => CARD_OPTIONS[startIndex + offset] === groups[offset]);
       if (groupCount === 1) {
         return groups[0];
       }
@@ -188,7 +190,10 @@ export default {
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log(data);
-      this.participants = data.map(value => ({name: value.userName, vote: value.cardNumber}));
+      if (data.type === 'BE RESET') {
+        this.selectedCardNumber = null;
+      }
+      this.participants = data.data.map(value => ({name: value.userName, vote: value.cardNumber}));
     };
     this.socket.onopen = () => this.submitCard()
   },
@@ -210,7 +215,7 @@ export default {
     .participants-header {
 
       margin: 0;
-      background-color: rgb(255, 200, 220);
+      background-color: #FFC8DCFF;
 
       .header-content {
         display: flex;
