@@ -22,10 +22,10 @@ export default {
     joinRoom() {
       console.log(this.roomId)
       if (!this.roomId) return;
-      this.$router.push(`/plapo/${this.roomId}`);
+      this.$router.push(`/rooms/${this.roomId}`);
     },
     createRoom() {
-      this.$router.push(`/plapo/${Math.random().toString(32).substring(2)}`);
+      this.$router.push(`/rooms/${Math.random().toString(32).substring(2)}`);
     }
   },
 }

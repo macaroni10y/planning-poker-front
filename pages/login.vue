@@ -1,7 +1,7 @@
 <template>
-  <div class="">
-    <input class="c-input" placeholder="input your name" type="text" v-model="userName">
-    <v-btn color="pink-lighten-2" :disabled="!userName" size="x-large" @click="registerName">got it!</v-btn>
+  <div class="main-content">
+    <input class="c-input" placeholder="input your name" type="text" v-model="userName" @keydown.enter="registerNameWithEnterKey">
+    <v-btn color="#FFC8DCFF" :disabled="!userName"  @click="registerName">got it!</v-btn>
   </div>
 </template>
 
@@ -18,14 +18,32 @@ export default {
     registerName() {
       Cookies.set('userInfo', JSON.stringify({userName: this.userName, timestamp: new Date().getTime().toString()}));
       this.$router.push('/top');
+    },
+    registerNameWithEnterKey(event) {
+      if(event.keyCode !== 13) return;
+      this.registerName();
     }
   }
 
 }
 </script>
 
-
-
-<style scoped>
-
+<style scoped lang="scss">
+.main-content {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  .c-input {
+    width: 200px;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    padding: 10px;
+    font-size: 20px;
+  }
+}
 </style>

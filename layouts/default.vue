@@ -1,6 +1,5 @@
 <template>
   <v-app style="height: 100vh; width: 100vw">
-<!--    <v-app-bar width="100vw"></v-app-bar>-->
     <Nuxt />
   </v-app>
 </template>
@@ -23,7 +22,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'plapo'
+      title: 'planning poker',
     }
   }
 }

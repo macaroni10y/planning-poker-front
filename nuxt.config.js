@@ -37,7 +37,7 @@ export default {
     middleware: 'loginCheck',
     extendRoutes(routes, resolve) {
       routes.forEach((route) => {
-        if(route.path.includes('/plapo/')) {
+        if(route.path.includes('/rooms/')) {
           route.props = true;
         }
       })
