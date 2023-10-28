@@ -34,10 +34,10 @@ export default {
   ],
 
   router: {
-    middleware: 'loginCheck',
+    middleware: ['loginCheck'],
     extendRoutes(routes, resolve) {
       routes.forEach((route) => {
-        if(route.path.includes('/rooms/')) {
+        if(route.path.includes('/rooms')) {
           route.props = true;
         }
       })

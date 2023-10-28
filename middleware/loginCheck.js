@@ -1,4 +1,3 @@
-// middleware/auth-check.js
 import Cookies from 'js-cookie';
 
 export default ({redirect, route}) => {
