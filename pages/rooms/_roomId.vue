@@ -86,14 +86,14 @@ export default {
   props: {
     roomId: {
       type: String,
-      required: true,
+      required: false,
+      default: 'empty',
     },
   },
   data() {
     return {
       participants: [],
       userName: '',
-      timestamp: '',
       hoveredCardIndex: null,
       selectedCardNumber: null,
       socket: null,
@@ -113,23 +113,26 @@ export default {
         left: `calc(-40px * ${index} + 180px)`
       };
     },
+    joinRoom() {
+      this.socket.send(JSON.stringify({
+        action: 'joinRoom',
+        roomId: this.roomId,
+        userName: this.userName,
+      }));
+    },
     submitCard() {
       this.socket.send(JSON.stringify({
-        operation: 'SUBMIT',
+        action: 'submitCard',
         roomId: this.roomId,
-        userId: this.userName + this.timestamp,
-        userName: this.userName,
         cardNumber: this.selectedCardNumber
       }));
     },
     resetRoom() {
       this.socket.send(JSON.stringify({
-        operation: 'RESET',
+        action: 'resetRoom',
         roomId: this.roomId,
-        userId: this.userName + this.timestamp,
       }))
     }
-
   },
   computed: {
     cards() {
@@ -184,18 +187,17 @@ export default {
     if (!userInfo) this.$router.push('/login');
 
     this.userName = userInfo.userName;
-    this.timestamp = userInfo.timestamp;
 
-    this.socket = new WebSocket('ws://localhost:8080');
+    this.socket = new WebSocket('wss://sjy1ekd1t6.execute-api.ap-northeast-1.amazonaws.com/v1/');
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log(data);
-      if (data.type === 'BE RESET') {
+      if (data.shouldReset) {
         this.selectedCardNumber = null;
       }
-      this.participants = data.data.map(value => ({name: value.userName, vote: value.cardNumber}));
+      this.participants = data.users.map(value => ({name: value.name, vote: value.cardNumber}));
     };
-    this.socket.onopen = () => this.submitCard()
+    this.socket.onopen = () => this.joinRoom();
   },
 }
 </script>
