@@ -1,7 +1,7 @@
 <template>
   <div class="c-top">
     <div class="c-join-room-container">
-        <input class="c-input" placeholder="input room id" type="text" v-model="roomId">
+        <input class="c-input" placeholder="input room id" type="text" v-model="roomId" @keydown.enter="joinRoom">
         <v-btn color="pink-lighten-2" :disabled="!roomId" size="x-large" @click="joinRoom">join</v-btn>
     </div>
         <v-btn color="#FFC8DCFF" @click="createRoom">create room</v-btn>
