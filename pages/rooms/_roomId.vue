@@ -15,7 +15,7 @@
         <v-col class="header-content" cols="6">name</v-col>
         <v-col class="header-content" cols="6">vote</v-col>
       </v-row>
-      <div style="max-height: 60vh;overflow-y: auto;">
+      <div style="max-height: 40vh;overflow-y: auto;">
         <v-row class="participant-container" v-for="participant in participants">
           <v-col class="participant-name">
             {{ participant.name }}
@@ -110,7 +110,7 @@ export default {
         minWidth: '70px',
         position: 'relative',
         bottom: '20px',
-        left: `calc(-40px * ${index} + 180px)`
+        left: `calc(-40px * ${index} + 200px)`
       };
     },
     joinRoom() {
@@ -212,7 +212,7 @@ export default {
   align-items: center;
 
   .participants-container {
-    flex: 5;
+    flex: 3;
 
     .participants-header {
 
@@ -254,7 +254,7 @@ export default {
     flex: 3;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
 
     .card-wrapper {
       width: 70px;
