@@ -12,16 +12,27 @@ export default {
   data() {
     return {
       userName: '',
+      redirectRoomId: '',
     }
   },
   methods: {
     registerName() {
       Cookies.set('userInfo', JSON.stringify({userName: this.userName, timestamp: new Date().getTime().toString()}));
+      if (this.redirectRoomId) {
+        this.$router.push(`/rooms/${this.redirectRoomId}`);
+        return;
+      }
       this.$router.push('/top');
     },
     registerNameWithEnterKey(event) {
       if(event.keyCode !== 13) return;
       this.registerName();
+    }
+  },
+  mounted() {
+    const { redirectRoomId } = this.$route.query;
+    if (redirectRoomId) {
+      this.redirectRoomId = redirectRoomId;
     }
   }
 

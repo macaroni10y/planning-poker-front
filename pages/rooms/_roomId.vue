@@ -1,26 +1,35 @@
 <template>
   <div class="plapo-main">
     <v-container>
-      <v-row v-if="voteCompleted">
-        <v-col>average: {{ average }}</v-col>
-        <v-col>mode: {{ mode }}</v-col>
-        <v-col>scrumDecision: {{ scrumDecision }}</v-col>
+      <v-row v-if="voteCompleted" >
+        <v-col class="result-container">
+          <v-row class="result-name">average</v-row>
+          <v-row class="result-content">{{ average }}</v-row>
+        </v-col>
+        <v-col class="result-container">
+          <v-row class="result-name">mode</v-row>
+          <v-row class="result-content">{{ mode }}</v-row>
+        </v-col>
+        <v-col class="result-container">
+          <v-row class="result-name">scrum decision</v-row>
+          <v-row class="result-content">{{ scrumDecision }}</v-row>
+        </v-col>
       </v-row>
       <v-row v-else>
         <v-col>waiting for all participants to vote</v-col>
       </v-row>
     </v-container>
-    <v-container class="participants-container ma-0 pa16">
+    <v-container class="participants-container ma-0">
       <v-row class="participants-header">
         <v-col class="header-content" cols="6">name</v-col>
         <v-col class="header-content" cols="6">vote</v-col>
       </v-row>
-      <div style="max-height: 60vh;overflow-y: auto;">
+      <div style="max-height: 40vh;overflow-y: auto;">
         <v-row class="participant-container" v-for="participant in participants">
           <v-col class="participant-name">
             {{ participant.name }}
           </v-col>
-          <v-col class="participant-vote">
+          <v-col class="participant-vote" >
             <div v-if="voteCompleted">{{ participant.vote }}</div>
             <div v-else-if="participant.vote">
               <v-icon color="green">mdi-check</v-icon>
@@ -38,7 +47,7 @@
         {{ selectedCardNumber }}
       </div>
     </div>
-    <v-btn color="#FFC8DCFF" @click="resetRoom">reset</v-btn>
+    <v-btn color="#FFC8DCFF" @click="resetRoom">next vote</v-btn>
 
     <div class="card-container">
       <div
@@ -110,7 +119,7 @@ export default {
         minWidth: '70px',
         position: 'relative',
         bottom: '20px',
-        left: `calc(-40px * ${index} + 180px)`
+        left: `calc(-40px * ${index} + 200px)`
       };
     },
     joinRoom() {
@@ -139,6 +148,7 @@ export default {
       return CARD_OPTIONS.map(value => ({name: value}));
     },
     voteCompleted() {
+      if(this.participants.length === 0) return false;
       return this.participants.every(value => value.vote);
     },
     availableVotes() {
@@ -211,8 +221,25 @@ export default {
   justify-content: center;
   align-items: center;
 
+  .result-container {
+    border: 1px solid rgba(0, 0, 0, 0.34);
+    border-radius: 10px;
+    margin: 4px;
+  }
+
+  .result-name {
+    font-size: 16px;
+    justify-content: center;
+  }
+
+  .result-content {
+    font-size: 24px;
+    font-weight: bold;
+    justify-content: center;
+  }
+
   .participants-container {
-    flex: 5;
+    flex: 3;
 
     .participants-header {
 
@@ -234,12 +261,14 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 10px;
       }
 
       .participant-vote {
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 10px;
       }
     }
   }
@@ -254,7 +283,7 @@ export default {
     flex: 3;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
 
     .card-wrapper {
       width: 70px;
