@@ -148,6 +148,7 @@ export default {
       return CARD_OPTIONS.map(value => ({name: value}));
     },
     voteCompleted() {
+      if(this.participants.length === 0) return false;
       return this.participants.every(value => value.vote);
     },
     availableVotes() {
