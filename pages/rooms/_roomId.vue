@@ -1,10 +1,19 @@
 <template>
   <div class="plapo-main">
     <v-container>
-      <v-row v-if="voteCompleted">
-        <v-col>average: {{ average }}</v-col>
-        <v-col>mode: {{ mode }}</v-col>
-        <v-col>scrumDecision: {{ scrumDecision }}</v-col>
+      <v-row v-if="voteCompleted" >
+        <v-col class="result-container">
+          <v-row class="result-name">average</v-row>
+          <v-row class="result-content">{{ average }}</v-row>
+        </v-col>
+        <v-col class="result-container">
+          <v-row class="result-name">mode</v-row>
+          <v-row class="result-content">{{ mode }}</v-row>
+        </v-col>
+        <v-col class="result-container">
+          <v-row class="result-name">scrum decision</v-row>
+          <v-row class="result-content">{{ scrumDecision }}</v-row>
+        </v-col>
       </v-row>
       <v-row v-else>
         <v-col>waiting for all participants to vote</v-col>
@@ -38,7 +47,7 @@
         {{ selectedCardNumber }}
       </div>
     </div>
-    <v-btn color="#FFC8DCFF" @click="resetRoom">reset</v-btn>
+    <v-btn color="#FFC8DCFF" @click="resetRoom">next vote</v-btn>
 
     <div class="card-container">
       <div
@@ -210,6 +219,23 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .result-container {
+    border: 1px solid rgba(0, 0, 0, 0.34);
+    border-radius: 10px;
+    margin: 4px;
+  }
+
+  .result-name {
+    font-size: 16px;
+    justify-content: center;
+  }
+
+  .result-content {
+    font-size: 24px;
+    font-weight: bold;
+    justify-content: center;
+  }
 
   .participants-container {
     flex: 3;
