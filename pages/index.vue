@@ -25,6 +25,7 @@ export default {
       this.$router.push('/top');
     },
     registerNameWithEnterKey(event) {
+      if(!this.userName) return;
       if(event.keyCode !== 13) return;
       this.registerName();
     }
