@@ -10,7 +10,7 @@
         <v-col>waiting for all participants to vote</v-col>
       </v-row>
     </v-container>
-    <v-container class="participants-container ma-0 pa16">
+    <v-container class="participants-container ma-0">
       <v-row class="participants-header">
         <v-col class="header-content" cols="6">name</v-col>
         <v-col class="header-content" cols="6">vote</v-col>
@@ -20,7 +20,7 @@
           <v-col class="participant-name">
             {{ participant.name }}
           </v-col>
-          <v-col class="participant-vote">
+          <v-col class="participant-vote" >
             <div v-if="voteCompleted">{{ participant.vote }}</div>
             <div v-else-if="participant.vote">
               <v-icon color="green">mdi-check</v-icon>
@@ -234,12 +234,14 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 10px;
       }
 
       .participant-vote {
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 10px;
       }
     }
   }
