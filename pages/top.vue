@@ -4,7 +4,7 @@
         <input class="c-input" placeholder="input room id" type="text" v-model="roomId">
         <v-btn color="pink-lighten-2" :disabled="!roomId" size="x-large" @click="joinRoom">join</v-btn>
     </div>
-        <v-btn color="#F06292" @click="createRoom">create room</v-btn>
+        <v-btn color="#FFC8DCFF" @click="createRoom">create room</v-btn>
   </div>
 </template>
 
@@ -25,7 +25,7 @@ export default {
       this.$router.push(`/rooms/${this.roomId}`);
     },
     createRoom() {
-      this.$router.push(`/rooms/${Math.random().toString(32).substring(2)}`);
+      this.$router.push(`/rooms/${Math.random().toString(32).substring(6)}`);
     }
   },
 }
