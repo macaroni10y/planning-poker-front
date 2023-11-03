@@ -20,7 +20,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar>
+    <v-app-bar flat>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
     </v-app-bar>

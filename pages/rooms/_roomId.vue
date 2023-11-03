@@ -1,28 +1,6 @@
 <template>
   <div class="plapo-main">
-    <v-container class="participants-container ma-8 pa-0">
-      <v-row class="participants-header">
-        <v-col class="header-content" cols="6">name</v-col>
-        <v-col class="header-content" cols="6">vote</v-col>
-      </v-row>
-      <div style="max-height: 40vh;overflow-y: auto;">
-        <v-row class="participant-container" v-for="participant in participants">
-          <v-col class="participant-name">
-            {{ participant.name }}
-          </v-col>
-          <v-col class="participant-vote">
-            <div v-if="voteCompleted">{{ participant.vote }}</div>
-            <div v-else-if="participant.vote">
-              <v-icon color="green">mdi-check</v-icon>
-            </div>
-            <div v-else>
-              <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
-            </div>
-          </v-col>
-        </v-row>
-      </div>
-    </v-container>
-    <v-container>
+    <v-container class="results-container">
       <v-row>
         <v-col class="result-container">
           <v-row class="result-name">average</v-row>
@@ -47,7 +25,31 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-btn color="#FFC8DCFF" @click="resetRoom" class="ma-4">next vote</v-btn>
+    <v-container class="participants-container pa-0">
+      <v-row class="participants-header">
+        <v-col class="header-content" cols="6">name</v-col>
+        <v-col class="header-content" cols="6">vote</v-col>
+      </v-row>
+      <div style="max-height: 40vh;overflow-y: auto;">
+        <v-row class="participant-container" v-for="participant in participants">
+          <v-col class="participant-name">
+            {{ participant.name }}
+          </v-col>
+          <v-col class="participant-vote">
+            <div v-if="voteCompleted">{{ participant.vote }}</div>
+            <div v-else-if="participant.vote">
+              <v-icon color="green">mdi-check</v-icon>
+            </div>
+            <div v-else>
+              <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
+            </div>
+          </v-col>
+        </v-row>
+      </div>
+    </v-container>
+    <v-container class="button-wrapper">
+      <v-btn color="#FFC8DCFF" width="70vw" max-width="400px" height="48px" elevation="none" @click="resetRoom" class="ma-4">next vote</v-btn>
+    </v-container>
 
     <div class="card-container">
       <div
@@ -162,7 +164,7 @@ export default {
         .reduce((accumulator, current) => accumulator + +(current), 0)
     },
     average() {
-      return +(Math.round(this.sum / this.availableVotes.length + "e+1") + "e-1");
+      return +(Math.round(this.sum / this.availableVotes.length + "e+1") + "e-1") || '-';
     },
     groupedByCount() {
       return this.availableVotes.reduce((accumulator, current) => {
@@ -173,7 +175,7 @@ export default {
     mode() {
       const counts = this.groupedByCount;
       const maxCount = Math.max(...Object.values(counts));
-      return Object.keys(counts).filter(key => counts[key] === maxCount).join(', ');
+      return Object.keys(counts).filter(key => counts[key] === maxCount).join(', ') || '-';
     },
     scrumDecision() {
       const groups = Object.keys(this.groupedByCount)
@@ -218,6 +220,7 @@ export default {
 
 <style scoped lang="scss">
 .plapo-main {
+  background-color: #fff5f8;
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -225,10 +228,12 @@ export default {
   justify-content: center;
   align-items: center;
 
-  .result-container {
-    border: 1px solid rgba(0, 0, 0, 0.34);
+  .results-container {
     border-radius: 10px;
-    margin: 4px;
+  }
+
+  .result-container {
+    border-radius: 10px;
   }
 
   .result-name {
@@ -244,13 +249,13 @@ export default {
   }
 
   .participants-container {
+    margin: 0;
     flex: 3;
+    background-color: white;
+    border-radius: 10px 10px 0 0;
 
     .participants-header {
-      border-radius: 10px 10px 0 0;
-
       margin: 0;
-      background-color: #FFC8DCFF;
 
       .header-content {
         display: flex;
@@ -278,10 +283,12 @@ export default {
       }
     }
   }
-
-  .own-vote-container {
-    flex: 1;
-    font-size: 36px;
+  .button-wrapper {
+    background-color: white;
+    flex: 0.5;
+    display: flex;
+    justify-content: center;
+    border-radius: 0 0 10px 10px;
   }
 
   .card-container {
