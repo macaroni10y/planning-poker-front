@@ -2,23 +2,9 @@
   <div class="plapo-main">
     <v-container class="results-container">
       <v-row>
-        <v-col class="result-container">
-          <v-row class="result-name">average</v-row>
-          <v-row class="result-content" v-if="voteCompleted">{{ average }}</v-row>
-          <v-row class="result-content" v-else>
-            <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
-          </v-row>
-        </v-col>
-        <v-col class="result-container">
-          <v-row class="result-name">mode</v-row>
-          <v-row class="result-content" v-if="voteCompleted">{{ mode }}</v-row>
-          <v-row class="result-content" v-else>
-            <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
-          </v-row>
-        </v-col>
-        <v-col class="result-container">
-          <v-row class="result-name">scrum decision</v-row>
-          <v-row class="result-content" v-if="voteCompleted">{{ scrumDecision }}</v-row>
+        <v-col v-for="result in voteResults" class="result-container">
+          <v-row class="result-name">{{ result.name }}</v-row>
+          <v-row class="result-content" v-if="voteCompleted">{{ result.value }}</v-row>
           <v-row class="result-content" v-else>
             <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
           </v-row>
@@ -191,7 +177,15 @@ export default {
         return groups[1];
       }
       return 'discuss';
-    }
+    },
+    voteResults() {
+      return [
+        {name: 'average', value: this.average},
+        {name: 'mode', value: this.mode},
+        {name: 'scrum decision', value: this.scrumDecision}
+      ];
+    },
+
   },
   created() {
     const key = 'userInfo';
@@ -283,6 +277,7 @@ export default {
       }
     }
   }
+
   .button-wrapper {
     background-color: white;
     flex: 0.5;
