@@ -1,12 +1,13 @@
 <template>
   <div class="main-content">
     <input class="c-input" placeholder="input your name" type="text" v-model="userName" @keydown.enter="registerNameWithEnterKey">
-    <v-btn color="#FFC8DCFF" :disabled="!userName"  @click="registerName">got it!</v-btn>
+    <v-btn color="#FFC8DCFF" :disabled="!userName" @click="registerName">got it!</v-btn>
   </div>
 </template>
 
 <script>
 import Cookies from 'js-cookie';
+
 export default {
   name: 'Login',
   data() {
@@ -17,7 +18,7 @@ export default {
   },
   methods: {
     registerName() {
-      Cookies.set('userInfo', JSON.stringify({userName: this.userName, timestamp: new Date().getTime().toString()}));
+      Cookies.set('userInfo', JSON.stringify({userName: this.userName, timestamp: new Date().getTime().toString()}), {expires: 90});
       if (this.redirectRoomId) {
         this.$router.push(`/rooms/${this.redirectRoomId}`);
         return;
@@ -25,13 +26,13 @@ export default {
       this.$router.push('/top');
     },
     registerNameWithEnterKey(event) {
-      if(!this.userName) return;
-      if(event.keyCode !== 13) return;
+      if (!this.userName) return;
+      if (event.keyCode !== 13) return;
       this.registerName();
     }
   },
   mounted() {
-    const { redirectRoomId } = this.$route.query;
+    const {redirectRoomId} = this.$route.query;
     if (redirectRoomId) {
       this.redirectRoomId = redirectRoomId;
     }
@@ -49,6 +50,7 @@ export default {
   justify-content: center;
   align-items: center;
   gap: 20px;
+
   .c-input {
     width: 200px;
     height: 50px;

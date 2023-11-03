@@ -1,24 +1,5 @@
 <template>
   <div class="plapo-main">
-    <v-container>
-      <v-row v-if="voteCompleted" >
-        <v-col class="result-container">
-          <v-row class="result-name">average</v-row>
-          <v-row class="result-content">{{ average }}</v-row>
-        </v-col>
-        <v-col class="result-container">
-          <v-row class="result-name">mode</v-row>
-          <v-row class="result-content">{{ mode }}</v-row>
-        </v-col>
-        <v-col class="result-container">
-          <v-row class="result-name">scrum decision</v-row>
-          <v-row class="result-content">{{ scrumDecision }}</v-row>
-        </v-col>
-      </v-row>
-      <v-row v-else>
-        <v-col>waiting for all participants to vote</v-col>
-      </v-row>
-    </v-container>
     <v-container class="participants-container ma-0">
       <v-row class="participants-header">
         <v-col class="header-content" cols="6">name</v-col>
@@ -29,7 +10,7 @@
           <v-col class="participant-name">
             {{ participant.name }}
           </v-col>
-          <v-col class="participant-vote" >
+          <v-col class="participant-vote">
             <div v-if="voteCompleted">{{ participant.vote }}</div>
             <div v-else-if="participant.vote">
               <v-icon color="green">mdi-check</v-icon>
@@ -41,13 +22,32 @@
         </v-row>
       </div>
     </v-container>
-    you selected
-    <div class="own-vote-container">
-      <div v-if="selectedCardNumber">
-        {{ selectedCardNumber }}
-      </div>
-    </div>
-    <v-btn color="#FFC8DCFF" @click="resetRoom">next vote</v-btn>
+    <v-container>
+      <v-row>
+        <v-col class="result-container">
+          <v-row class="result-name">average</v-row>
+          <v-row class="result-content" v-if="voteCompleted">{{ average }}</v-row>
+          <v-row class="result-content" v-else>
+            <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
+          </v-row>
+        </v-col>
+        <v-col class="result-container">
+          <v-row class="result-name">mode</v-row>
+          <v-row class="result-content" v-if="voteCompleted">{{ mode }}</v-row>
+          <v-row class="result-content" v-else>
+            <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
+          </v-row>
+        </v-col>
+        <v-col class="result-container">
+          <v-row class="result-name">scrum decision</v-row>
+          <v-row class="result-content" v-if="voteCompleted">{{ scrumDecision }}</v-row>
+          <v-row class="result-content" v-else>
+            <v-progress-circular indeterminate width="3" size="25"></v-progress-circular>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-btn color="#FFC8DCFF" @click="resetRoom" class="ma-4">next vote</v-btn>
 
     <div class="card-container">
       <div
@@ -59,6 +59,7 @@
         <v-card
           :elevation="hoveredCardIndex === index ? 12 : 2"
           class="card-wrapper"
+          :class="selectedCardNumber === card.name ? 'card-wrapper-selected': ''"
           hover
           @mouseover="hoveredCardIndex = index"
           @mouseleave="hoveredCardIndex = null"
@@ -148,7 +149,7 @@ export default {
       return CARD_OPTIONS.map(value => ({name: value}));
     },
     voteCompleted() {
-      if(this.participants.length === 0) return false;
+      if (this.participants.length === 0) return false;
       return this.participants.every(value => value.vote);
     },
     availableVotes() {
@@ -209,6 +210,9 @@ export default {
     };
     this.socket.onopen = () => this.joinRoom();
   },
+  beforeDestroy() {
+    this.socket.close();
+  }
 }
 </script>
 
@@ -233,6 +237,7 @@ export default {
   }
 
   .result-content {
+    height: 36px;
     font-size: 24px;
     font-weight: bold;
     justify-content: center;
@@ -280,7 +285,7 @@ export default {
 
   .card-container {
     width: 50vw;
-    flex: 3;
+    flex: 2;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -290,6 +295,10 @@ export default {
       height: 120px;
       display: flex;
       flex-direction: column;
+
+      &-selected {
+        background-color: #ff7fac;
+      }
 
       &:hover {
         transform: translateY(-20px);
