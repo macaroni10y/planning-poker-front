@@ -1,6 +1,6 @@
 <template>
   <div class="plapo-main">
-    <v-container class="participants-container ma-0">
+    <v-container class="participants-container ma-8 pa-0">
       <v-row class="participants-header">
         <v-col class="header-content" cols="6">name</v-col>
         <v-col class="header-content" cols="6">vote</v-col>
@@ -247,6 +247,7 @@ export default {
     flex: 3;
 
     .participants-header {
+      border-radius: 10px 10px 0 0;
 
       margin: 0;
       background-color: #FFC8DCFF;
