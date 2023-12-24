@@ -34,7 +34,8 @@
       </div>
     </v-container>
     <v-container class="button-wrapper">
-      <v-btn color="#FFC8DCFF" width="70vw" max-width="400px" height="48px" elevation="none" @click="resetRoom" class="ma-4">next vote</v-btn>
+      <v-btn color="#FFC8DCFF" width="40vw" max-width="200px" height="48px" elevation="none" @click="revealAllCards" class="ma-4">reveal</v-btn>
+      <v-btn color="#FFC8DCFF" width="40vw" max-width="200px" height="48px" elevation="none" @click="resetRoom" class="ma-4">next vote</v-btn>
     </v-container>
 
     <div class="card-container">
@@ -128,6 +129,12 @@ export default {
     resetRoom() {
       this.socket.send(JSON.stringify({
         action: 'resetRoom',
+        roomId: this.roomId,
+      }))
+    },
+    revealAllCards() {
+      this.socket.send(JSON.stringify({
+        action: 'revealAllCards',
         roomId: this.roomId,
       }))
     }
