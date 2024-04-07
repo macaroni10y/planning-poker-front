@@ -1,5 +1,6 @@
 # planning-poker
-
+> [!Note]
+> Now I mainly maintain [planning-poker-front-nextjs](https://github.com/macaroni10y/planning-poker-front-nextjs) as a [macaroni-poker](https://macaroni-poker.vercel.app/) client instead of this repository.
 ## Build Setup
 
 ```bash
